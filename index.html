@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+		<meta content="utf-8" http-equiv="encoding">
+		<title>iTunes Previewer</title>
+		<script src="jquery-1.11.3.js"></script>
+		<script type="text/javascript">
+			$( document ).ready(function() {
+				
+				$("#clearButton").click(function() {
+					$("ul").empty();
+				})
+
+				$("#searchButton").click(function() {
+				   // console.log( "clicks!" );
+				   var value = $("#searchQuery").val();
+				   console.log(value);
+
+				$.ajax({
+				    url: 'https://itunes.apple.com/search?term=' + value,
+				    dataType: 'jsonp',
+				    success: function(data){
+				        // do whatever you want with the data you get back from the API
+				        console.log(data)
+				        var newArray = [];
+				        var anotherArray = [];
+				        var resultsArray = data.results;
+				        var audioArray = [];
+
+				        // Get each track name, artworkURL and its previewURL then store it
+				        // into new arrays
+				        for (var i=0; i<resultsArray.length; i++){
+				        	var track = resultsArray[i].trackName;
+				        	var artwork = resultsArray[i].artworkUrl100;
+				        	var audioP = resultsArray[i].previewUrl;
+				        	newArray.push(track);
+				        	anotherArray.push(artwork);
+				        	audioArray.push(audioP);
+				        }
+	                	console.log(newArray);
+	                	console.log(anotherArray);
+
+	                	var newHTML = [];
+
+	            // Creates list of elements we want to list on the view
+			    $.each(newArray, function(index, value) {
+			    	// Audio tag/element is used to embed audio into the document
+			    	// Some browsers do NOT support audio element
+				    newHTML.push('<hr><li> <br><img src=' + anotherArray[index] 
+				    				+ '> <br>' + newArray[index] 
+				    				+ '</li> <br>' + '<audio controls><source src=' 
+				    				+ audioArray[index] + ' type="audio/mp4" /></audio><br>'
+				    				);
+
+				    console.log(artwork)
+				});
+
+			    // append, is very synonymous to push. In short it appends
+			    // .join() joins the items of an array by using its parameter as a separator 
+			    // between these list items
+			    $('#list').append( newHTML.join(''));
+
+				    }
+				}) 
+
+			})
+
+	    });
+
+		</script>	
+	</head>
+
+	<body>
+		<p>Please input a music artist's name: </p>
+		<input type="text" id="searchQuery"/>
+		<input type="submit" id="searchButton" value = "Fetch Tracks"/>
+		<input type="submit" id="clearButton"  value = "Clear"/>
+		<ul id="list">		
+		</ul>
+	</body>
+
+</html>
